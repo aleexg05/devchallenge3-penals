@@ -1,20 +1,21 @@
 {
-  "name": "devchallenge3-penals",
+  "name": "devchallenge3-penals-server",
   "version": "1.0.0",
-  "description": "Joc de penals per dos jugadors amb WebSockets",
+  "description": "Server-side application for the basic penalty shootout game with real-time communication via WebSockets.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "NODE_ENV=development node server.js",
-    "test": "node test.js || exit 0"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.19.2",
-    "ws": "^8.18.0"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aleexg05/devchallenge3-penals.git"
   },
-  "devDependencies": {},
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "ws": "^7.4.6"
+  }
 }

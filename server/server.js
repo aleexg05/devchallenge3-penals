@@ -1,21 +1,27 @@
 const express = require('express');
-const cors = require('cors');
 const http = require('http');
-const path = require('path');
-const setupWebSocket = require('./ws');
+const WebSocket = require('ws');
+const gameManager = require('./gameManager');
 
 const app = express();
-app.use(cors());
-app.use(express.json());
-
-// Serveix el client estàtic
-app.use('/', express.static(path.join(__dirname, '..', 'client')));
-
-// Endpoint de prova
-app.get('/health', (_req, res) => res.json({ status: 'ok' }));
-
 const server = http.createServer(app);
-setupWebSocket(server);
+const wss = new WebSocket.Server({ server });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`Server on http://localhost:${PORT}`));
+app.use(express.static('../client'));
+
+wss.on('connection', (ws) => {
+    console.log('New client connected');
+
+    ws.on('message', (message) => {
+        const data = JSON.parse(message);
+        gameManager.handlePlayerAction(data, ws);
+    });
+
+    ws.on('close', () => {
+        console.log('Client disconnected');
+    });
+});
+
+server.listen(3000, () => {
+    console.log('Server is listening on port 3000');
+});
