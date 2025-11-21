@@ -69,7 +69,14 @@ function setupWebSocket(server) {
         if (!res.ok) return send(ws, 'ERROR', res);
 
         if (res.completed) {
-          broadcast(meta.roomId, 'ROUND_RESULT', res.result);
+          // 🔧 CANVI CRÍTIC: normalitzem les claus per al client
+          broadcast(meta.roomId, 'ROUND_RESULT', {
+            score1: res.result.scores[1],
+            score2: res.result.scores[2],
+            winner: res.result.winner,
+            round: res.result.round
+          });
+
           if (res.finished) {
             broadcast(meta.roomId, 'GAME_OVER', { finalScore: res.finalScore });
           }
@@ -91,5 +98,5 @@ function setupWebSocket(server) {
 
   return wss;
 }
- 
+
 module.exports = setupWebSocket;
