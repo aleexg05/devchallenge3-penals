@@ -68,21 +68,18 @@ function setupWebSocket(server) {
         const res = gm.submitMove(meta.roomId, meta.socketId, payload);
         if (!res.ok) return send(ws, 'ERROR', res);
 
-        if (res.completed) {
-          // 🔧 CANVI CRÍTIC: normalitzem les claus per al client
-          broadcast(meta.roomId, 'ROUND_RESULT', {
-            score1: res.result.scores[1],
-            score2: res.result.scores[2],
-            winner: res.result.winner,
-            round: res.result.round
-          });
+       if (res.completed) {
+  broadcast(meta.roomId, 'ROUND_RESULT', {
+    score1: res.result.scores[1],
+    score2: res.result.scores[2],
+    winner: res.result.winner,
+    round: res.result.round
+  });
+  if (res.finished) {
+    broadcast(meta.roomId, 'GAME_OVER', { finalScore: res.finalScore });
+  }
+}
 
-          if (res.finished) {
-            broadcast(meta.roomId, 'GAME_OVER', { finalScore: res.finalScore });
-          }
-        } else {
-          broadcast(meta.roomId, 'WAITING_FOR_OPPONENT', { player: meta.playerNumber });
-        }
       }
     });
 
