@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Joc de penals</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main>
+    <h1>Joc de penals</h1>
+
+    <section aria-labelledby="room-section">
+      <h2 id="room-section">Sala</h2>
+      <div class="room-actions">
+        <button id="createRoom" aria-label="Crear sala">Crear sala</button>
+        <input id="roomId" type="text" placeholder="ID sala" aria-label="ID de la sala" />
+        <button id="joinRoom" aria-label="Unir-se a la sala">Unir-se</button>
+      </div>
+      <p id="status" role="status">No connectat</p>
+    </section>
+
+    <section aria-labelledby="move-section">
+      <h2 id="move-section">Tirada</h2>
+      <form id="moveForm">
+        <fieldset>
+          <legend>Xut</legend>
+          <label>Alçada
+            <select id="shotHeight" required>
+              <option value="baixa">Baixa</option>
+              <option value="mitjana">Mitjana</option>
+              <option value="alta">Alta</option>
+            </select>
+          </label>
+          <label>Direcció
+            <select id="shotDirection" required>
+              <option value="esquerra">Esquerra</option>
+              <option value="centre">Centre</option>
+              <option value="dreta">Dreta</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Aturada</legend>
+          <label>Alçada
+            <select id="saveHeight" required>
+              <option value="baixa">Baixa</option>
+              <option value="mitjana">Mitjana</option>
+              <option value="alta">Alta</option>
+            </select>
+          </label>
+          <label>Direcció
+            <select id="saveDirection" required>
+              <option value="esquerra">Esquerra</option>
+              <option value="centre">Centre</option>
+              <option value="dreta">Dreta</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <button type="submit" id="submitMove" disabled>Enviar tirada</button>
+      </form>
+    </section>
+
+    <section aria-labelledby="result-section">
+      <h2 id="result-section">Resultat</h2>
+      <div id="result" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

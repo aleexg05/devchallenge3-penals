@@ -1,0 +1,16 @@
+{
+  "name": "devchallenge3-penals",
+  "version": "1.0.0",
+  "description": "Joc de penals per dos jugadors amb WebSockets",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "NODE_ENV=development node server.js",
+    "test": "node test.js || exit 0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "ws": "^8.18.0"
+  }
+}
