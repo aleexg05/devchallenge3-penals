@@ -4,13 +4,22 @@ let player;
 let roomId;
 let ready = false;
 
+// Seleccions del jugador
+let selectedShot = { height: null, direction: null };
+let selectedSave = { height: null, direction: null };
+
 const statusEl = document.getElementById('status');
 const createBtn = document.getElementById('createRoom');
 const joinBtn = document.getElementById('joinRoom');
 const roomInput = document.getElementById('roomId');
-const moveForm = document.getElementById('moveForm');
 const submitBtn = document.getElementById('submitMove');
 const resultEl = document.getElementById('result');
+const selectedShotEl = document.getElementById('selected-shot');
+const selectedSaveEl = document.getElementById('selected-save');
+
+// Botons de xut i aturada
+const shootButtons = document.querySelectorAll('.shoot-btn');
+const saveButtons = document.querySelectorAll('.save-btn');
 
 function connect() {
   ws = new WebSocket(wsUrl);
@@ -30,30 +39,31 @@ function connect() {
       player = payload.player;
       ready = payload.ready;
       setStatus(`Ets el jugador ${player}.` + (ready ? ' Tots a punt.' : ' Esperant rival...'));
-      submitBtn.disabled = !ready;
+      updateSubmitButton();
     }
 
     if (type === 'PLAYER_JOINED') {
       ready = payload.ready;
       if (ready) {
         setStatus(`Rival connectat. Podeu enviar la tirada.`);
-        submitBtn.disabled = false;
+        updateSubmitButton();
       }
     }
 
     if (type === 'MOVE_ACK') {
       setStatus('Tirada enviada. Esperant la del rival...');
+      disableButtons();
     }
 
     if (type === 'ROUND_RESULT') {
-      // ✅ Ara el servidor envia score1, score2 i winner
       const { score1, score2, winner, round } = payload;
       const you = player === 1 ? score1 : score2;
       const opp = player === 1 ? score2 : score1;
       const msgWinner = winner === 0 ? 'Empat' : (winner === player ? 'Has guanyat!' : 'Has perdut');
       resultEl.textContent = `Ronda ${round} → Tu: ${you} | Rival: ${opp} → ${msgWinner}`;
       setStatus('Ronda finalitzada. Envia una nova tirada quan vulguis.');
-      submitBtn.disabled = false;
+      resetSelections();
+      enableButtons();
     }
 
     if (type === 'GAME_OVER') {
@@ -61,6 +71,7 @@ function connect() {
       resultEl.textContent = `🏁 Partida acabada! Puntuació final → J1: ${finalScore[1]} | J2: ${finalScore[2]}`;
       setStatus('Partida finalitzada.');
       submitBtn.disabled = true;
+      disableButtons();
     }
 
     if (type === 'ERROR') {
@@ -69,11 +80,37 @@ function connect() {
   });
 }
 
+// Gestió de l'animació d'inici
+const introScreen = document.getElementById('intro-screen');
+const penaltyAnimation = document.querySelector('.penalty-animation');
+const introContent = document.querySelector('.intro-content');
+const gameMain = document.getElementById('game-main');
+const startBtn = document.getElementById('start-game');
+
+// Mostra el contingut després de l'animació del penal (4.5 segons)
+setTimeout(() => {
+  penaltyAnimation.classList.add('hide');
+  setTimeout(() => {
+    penaltyAnimation.style.display = 'none';
+    introContent.classList.add('show');
+  }, 500);
+}, 4500);
+
+// Event del botó començar
+startBtn.addEventListener('click', () => {
+  introScreen.classList.add('fade-out');
+  setTimeout(() => {
+    introScreen.style.display = 'none';
+    gameMain.style.display = 'block';
+  }, 500);
+});
+
+
+
 function setStatus(text) {
   statusEl.textContent = text;
 }
 
-// Funció segura per enviar
 function safeSend(msg) {
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.send(JSON.stringify(msg));
@@ -81,6 +118,78 @@ function safeSend(msg) {
     console.warn('⚠️ Socket encara no està obert, reintentant...', msg);
     ws.addEventListener('open', () => ws.send(JSON.stringify(msg)), { once: true });
   }
+}
+
+// Gestió dels botons de xut
+shootButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const height = btn.dataset.height;
+    const direction = btn.dataset.direction;
+    
+    // Deseleccionar tots els botons de xut
+    shootButtons.forEach(b => b.classList.remove('selected'));
+    
+    // Seleccionar el botó clicat
+    btn.classList.add('selected');
+    
+    // Guardar la selecció
+    selectedShot = { height, direction };
+    
+    // Mostrar la selecció
+    selectedShotEl.textContent = `Xut seleccionat: ${capitalize(height)} - ${capitalize(direction)}`;
+    
+    updateSubmitButton();
+  });
+});
+
+// Gestió dels botons d'aturada
+saveButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const height = btn.dataset.height;
+    const direction = btn.dataset.direction;
+    
+    // Deseleccionar tots els botons d'aturada
+    saveButtons.forEach(b => b.classList.remove('selected'));
+    
+    // Seleccionar el botó clicat
+    btn.classList.add('selected');
+    
+    // Guardar la selecció
+    selectedSave = { height, direction };
+    
+    // Mostrar la selecció
+    selectedSaveEl.textContent = `Aturada seleccionada: ${capitalize(height)} - ${capitalize(direction)}`;
+    
+    updateSubmitButton();
+  });
+});
+
+function updateSubmitButton() {
+  submitBtn.disabled = !ready || !selectedShot.height || !selectedSave.height;
+}
+
+function resetSelections() {
+  selectedShot = { height: null, direction: null };
+  selectedSave = { height: null, direction: null };
+  shootButtons.forEach(b => b.classList.remove('selected'));
+  saveButtons.forEach(b => b.classList.remove('selected'));
+  selectedShotEl.textContent = '';
+  selectedSaveEl.textContent = '';
+  updateSubmitButton();
+}
+
+function disableButtons() {
+  shootButtons.forEach(b => b.disabled = true);
+  saveButtons.forEach(b => b.disabled = true);
+}
+
+function enableButtons() {
+  shootButtons.forEach(b => b.disabled = false);
+  saveButtons.forEach(b => b.disabled = false);
+}
+
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 createBtn.addEventListener('click', () => {
@@ -95,18 +204,20 @@ joinBtn.addEventListener('click', () => {
   safeSend({ type: 'ROOM_JOIN', payload: { roomId: id } });
 });
 
-moveForm.addEventListener('submit', (e) => {
-  e.preventDefault();
+submitBtn.addEventListener('click', () => {
   if (!ready) return alert('Encara no esteu tots a punt');
-  const shot = {
-    height: document.getElementById('shotHeight').value,
-    direction: document.getElementById('shotDirection').value
-  };
-  const save = {
-    height: document.getElementById('saveHeight').value,
-    direction: document.getElementById('saveDirection').value
-  };
-  safeSend({ type: 'SUBMIT_MOVE', payload: { shot, save } });
+  if (!selectedShot.height || !selectedSave.height) {
+    return alert('Has de seleccionar tant el xut com l\'aturada');
+  }
+  
+  safeSend({ 
+    type: 'SUBMIT_MOVE', 
+    payload: { 
+      shot: selectedShot, 
+      save: selectedSave 
+    } 
+  });
+  
   submitBtn.disabled = true;
 });
 
@@ -114,5 +225,4 @@ function ensureConnection() {
   if (!ws || ws.readyState !== WebSocket.OPEN) connect();
 }
 
-// arrenca connexió perezosa
-setStatus('No connectat. Crea o uneix-te a una sala per començar.');
+setStatus('Crea o uneix-te a una sala per començar.');

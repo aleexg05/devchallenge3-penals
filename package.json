@@ -1,0 +1,20 @@
+{
+  "name": "devchallenge3-penals",
+  "version": "1.0.0",
+  "description": "Joc bàsic de penals per dos jugadors amb comunicació en temps real via WebSockets. Cada jugador tria xut (alçada/direcció) i aturada (alçada/direcció). Puntuacions: 0, 1 o 2. Resultat per ronda i reinici automàtic.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aleexg05/devchallenge3-penals.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aleexg05/devchallenge3-penals/issues"
+  },
+  "homepage": "https://github.com/aleexg05/devchallenge3-penals#readme"
+}

@@ -1,10 +1,12 @@
 :root {
-  --bg: #0f172a;
-  --panel: #1e293b;
+  --bg: #1a4d2e;
+  --panel: #234d35;
   --text: #e2e8f0;
-  --accent: #22c55e;
-  --accent-2: #38bdf8;
+  --accent: #4a9d5f;
+  --accent-2: #5db370;
   --danger: #ef4444;
+  --field-green: #2d5f3e;
+  --field-dark: #1a4d2e;
 }
 
 * {
@@ -20,19 +22,25 @@ body {
 }
 
 main {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem;
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 2rem 3rem;
 }
 
 section {
   background: var(--panel);
-  padding: 1rem;
+  padding: 1.5rem;
   border-radius: 12px;
   margin-bottom: 1rem;
 }
 
-h1,
+h1 {
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+  font-size: 2.5rem;
+}
+
 h2 {
   margin: 0 0 0.75rem 0;
 }
@@ -41,6 +49,306 @@ h2 {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Pantalla d'inici */
+.intro-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(135deg, #1a4d2e 0%, #2d5f3e 50%, #4a9d5f 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.intro-content {
+  text-align: center;
+  max-width: 800px;
+  padding: 3rem;
+  background: rgba(35, 77, 53, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.8s ease-out;
+}
+
+.intro-title {
+  font-size: 4rem;
+  margin: 0 0 1rem 0;
+  color: var(--text);
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+  animation: bounce 1s ease-in-out infinite alternate;
+}
+
+.intro-subtitle {
+  font-size: 1.5rem;
+  color: var(--accent-2);
+  margin-bottom: 3rem;
+  font-weight: 500;
+}
+
+.intro-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.feature {
+  background: rgba(74, 157, 95, 0.2);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 2px solid rgba(93, 179, 112, 0.3);
+  transition: all 0.3s ease;
+}
+
+.feature:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-2);
+  box-shadow: 0 10px 25px rgba(93, 179, 112, 0.3);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.feature h3 {
+  font-size: 1.3rem;
+  color: var(--accent-2);
+  margin-bottom: 0.5rem;
+}
+
+.feature p {
+  color: var(--text);
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.start-btn {
+  padding: 1.5rem 4rem;
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(74, 157, 95, 0.4);
+  margin-bottom: 2rem;
+}
+
+.start-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 40px rgba(74, 157, 95, 0.6);
+}
+
+.start-btn:active {
+  transform: translateY(-1px);
+}
+
+.intro-instructions {
+  text-align: left;
+  background: rgba(26, 77, 46, 0.5);
+  padding: 1.5rem;
+  border-radius: 10px;
+  border-left: 4px solid var(--accent-2);
+}
+
+.intro-instructions p {
+  margin: 0.5rem 0;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.intro-instructions strong {
+  color: var(--accent-2);
+  font-size: 1.1rem;
+}
+
+/* Animació de penal a la intro */
+.penalty-animation {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.field {
+  position: relative;
+  width: 80%;
+  max-width: 800px;
+  aspect-ratio: 16/10;
+}
+
+.goal-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  opacity: 0.8;
+}
+
+.player {
+  position: absolute;
+  bottom: 5%;
+  left: 50%;
+  font-size: 4rem;
+  transform: translateX(-50%);
+  animation: playerRun 2s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+.ball {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  font-size: 3rem;
+  transform: translateX(-50%);
+  animation: ballKick 2s ease-in-out 2s;
+  animation-fill-mode: forwards;
+  z-index: 10;
+}
+
+.goalkeeper {
+  position: absolute;
+  top: 60%;
+  /* Canviat de 30% a 45% per estar dins la porteria */
+  left: 50%;
+  font-size: 3.5rem;
+  transform: translateX(-50%);
+  animation: keeperDive 1.5s ease-out 3s;
+  animation-fill-mode: forwards;
+}
+
+/* Animacions */
+@keyframes ballKick {
+  0% {
+
+    left: 50%;
+    transform: translateX(-50%) scale(1);
+  }
+
+  100% {
+    bottom: 40%;
+    /* Canviat de 60% a 50% */
+    left: 30%;
+    transform: translateX(-50%) scale(0.6) rotate(360deg);
+  }
+}
+
+@keyframes keeperDive {
+  0% {
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) rotate(0deg);
+  }
+
+  100% {
+    left: 30%;
+    top: 60%;
+    /* Canviat de 40% a 48% per estar a l'alçada de la pilota */
+    transform: translateX(-50%) rotate(-45deg);
+  }
+}
+
+/* Fade in del contingut després de l'animació */
+.intro-content.show {
+  display: block !important;
+  animation: contentFadeIn 1s ease-in;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Amaga l'animació quan acaba */
+.penalty-animation.hide {
+  animation: fadeOutAnimation 0.5s ease-out forwards;
+}
+
+@keyframes fadeOutAnimation {
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+.intro-screen.fade-out {
+  animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .intro-title {
+    font-size: 2.5rem;
+  }
+
+  .intro-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .intro-features {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .start-btn {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+  }
+
+  .intro-content {
+    padding: 2rem;
+  }
+}
+
+/* Afegeix al final del fitxer */
+#game-section,
+#submit-section,
+#result-section {
+  animation: fadeInSlide 0.6s ease-out;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 input,
@@ -48,15 +356,22 @@ select,
 button {
   padding: 0.6rem 0.8rem;
   border-radius: 8px;
-  border: 1px solid #334155;
-  background: #0b1220;
+  border: 1px solid #2d5f3e;
+  background: #1a3d2e;
   color: var(--text);
 }
 
 button {
   cursor: pointer;
-  background: var(--accent-2);
+  background: var(--accent);
   border-color: transparent;
+  font-weight: 600;
+}
+
+button:hover:not([disabled]) {
+  background: var(--accent-2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 157, 95, 0.4);
 }
 
 button[disabled] {
@@ -64,21 +379,154 @@ button[disabled] {
   cursor: not-allowed;
 }
 
-fieldset {
-  border: 1px solid #334155;
-  border-radius: 8px;
-  margin-bottom: 0.75rem;
-}
-
-legend {
-  padding: 0 0.5rem;
-}
-
 #result {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   min-height: 2rem;
+  text-align: center;
 }
 
 #status {
-  color: #a3e635;
+  color: #5db370;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Porteries una al costat de l'altra */
+.game-section {
+  background: transparent;
+  padding: 0;
+}
+
+.goals-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.goal-wrapper {
+  background: var(--panel);
+  padding: 1.5rem;
+  border-radius: 12px;
+}
+
+.goal-wrapper h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--accent-2);
+  font-size: 1.8rem;
+}
+
+/* Camp de joc */
+#game-field,
+#save-field {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.goal-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Botons de xut i aturada */
+.shoot-buttons,
+.save-buttons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 8px;
+  padding: 10%;
+}
+
+.shoot-btn,
+.save-btn {
+  background: rgba(74, 157, 95, 0.6);
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(2px);
+}
+
+.shoot-btn:hover,
+.save-btn:hover {
+  background: rgba(74, 157, 95, 0.9);
+  border-color: white;
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+.shoot-btn.selected,
+.save-btn.selected {
+  background: rgba(93, 179, 112, 0.95);
+  border-color: #5db370;
+  border-width: 4px;
+  box-shadow: 0 0 30px rgba(93, 179, 112, 0.8);
+  transform: scale(1.1);
+}
+
+.shoot-btn:disabled,
+.save-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.selection-display {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--text);
+  min-height: 2.5rem;
+  font-weight: 600;
+  background: rgba(74, 157, 95, 0.3);
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-top: 0.75rem;
+}
+
+#submitMove {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  display: block;
+  padding: 1.2rem;
+  font-size: 1.5rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+#submitMove:hover:not([disabled]) {
+  background: var(--accent-2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(74, 157, 95, 0.4);
+}
+
+#submitMove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1200px) {
+  .goals-container {
+    grid-template-columns: 1fr;
+  }
+
+  main {
+    padding: 1.5rem;
+  }
 }
