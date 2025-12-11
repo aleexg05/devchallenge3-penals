@@ -78,7 +78,7 @@ h2 {
 }
 
 .intro-title {
-  font-size: 4rem;
+  font-size: 2.5rem;
   margin: 0 0 1rem 0;
   color: var(--text);
   text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
@@ -132,8 +132,8 @@ h2 {
 }
 
 .start-btn {
-  padding: 1.5rem 4rem;
-  font-size: 1.5rem;
+  padding: 1rem 3rem;
+  font-size: 1.3rem;
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
   color: white;
   border: none;
@@ -145,6 +145,25 @@ h2 {
   transition: all 0.3s ease;
   box-shadow: 0 10px 30px rgba(74, 157, 95, 0.4);
   margin-bottom: 2rem;
+  text-decoration: none;
+
+}.restart-btn{
+  display: inline-block;
+    padding: 1rem 3rem;
+  font-size: 15px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  color: white;
+  border: none; 
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase; 
+  letter-spacing: 1px; 
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(74, 157, 95, 0.4); 
+  text-decoration: none;
+  padding:10px;
+  margin-top: 30px;
 }
 
 .start-btn:hover {
@@ -188,8 +207,10 @@ h2 {
 
 .field {
   position: relative;
-  width: 80%;
-  max-width: 800px;
+  width: 100%;
+  /* antes 80% */
+  max-width: 1000px;
+  /* antes 800px */
   aspect-ratio: 16/10;
 }
 
@@ -310,7 +331,7 @@ h2 {
 
 @media (max-width: 768px) {
   .intro-title {
-    font-size: 2.5rem;
+    font-size: 3rem;
   }
 
   .intro-subtitle {
@@ -328,7 +349,13 @@ h2 {
   }
 
   .intro-content {
+    text-align: center;
+    max-width: 600px;
+    /* antes 800px */
     padding: 2rem;
+    /* antes 3rem */
+    border-radius: 16px;
+    /* antes 20px */
   }
 }
 
@@ -436,10 +463,11 @@ button[disabled] {
 .shoot-buttons,
 .save-buttons {
   position: absolute;
-  top: 0;
-  left: 0;
+  margin-top: -20px;
+  top:0px;
+  left: 0px;
   width: 100%;
-  height: 100%;
+  height: 10%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);

@@ -21,6 +21,36 @@ const selectedSaveEl = document.getElementById('selected-save');
 const shootButtons = document.querySelectorAll('.shoot-btn');
 const saveButtons = document.querySelectorAll('.save-btn');
 
+// Referències per mostrar/amagar seccions
+const gameSectionEl = document.getElementById('game-section');
+const submitSectionEl = document.getElementById('submit-section');
+const resultSectionEl = document.getElementById('result-section');
+
+// Gestió de l'animació d'inici
+const introScreen = document.getElementById('intro-screen');
+const penaltyAnimation = document.querySelector('.penalty-animation');
+const introContent = document.querySelector('.intro-content');
+const gameMain = document.getElementById('game-main');
+const startBtn = document.getElementById('start-game');
+
+// Mostra el contingut després de l'animació del penal (4.5 segons)
+setTimeout(() => {
+  penaltyAnimation.classList.add('hide');
+  setTimeout(() => {
+    penaltyAnimation.style.display = 'none';
+    introContent.classList.add('show');
+  }, 500);
+}, 4500);
+
+// Event del botó començar
+startBtn.addEventListener('click', () => {
+  introScreen.classList.add('fade-out');
+  setTimeout(() => {
+    introScreen.style.display = 'none';
+    gameMain.style.display = 'block';
+  }, 500);
+});
+
 function connect() {
   ws = new WebSocket(wsUrl);
 
@@ -33,12 +63,14 @@ function connect() {
       roomId = payload.roomId;
       roomInput.value = roomId;
       setStatus(`Sala creada: ${roomId}. Comparteix l'ID amb el teu rival.`);
+      showGameSections();
     }
 
     if (type === 'JOINED') {
       player = payload.player;
       ready = payload.ready;
       setStatus(`Ets el jugador ${player}.` + (ready ? ' Tots a punt.' : ' Esperant rival...'));
+      showGameSections();
       updateSubmitButton();
     }
 
@@ -80,32 +112,11 @@ function connect() {
   });
 }
 
-// Gestió de l'animació d'inici
-const introScreen = document.getElementById('intro-screen');
-const penaltyAnimation = document.querySelector('.penalty-animation');
-const introContent = document.querySelector('.intro-content');
-const gameMain = document.getElementById('game-main');
-const startBtn = document.getElementById('start-game');
-
-// Mostra el contingut després de l'animació del penal (4.5 segons)
-setTimeout(() => {
-  penaltyAnimation.classList.add('hide');
-  setTimeout(() => {
-    penaltyAnimation.style.display = 'none';
-    introContent.classList.add('show');
-  }, 500);
-}, 4500);
-
-// Event del botó començar
-startBtn.addEventListener('click', () => {
-  introScreen.classList.add('fade-out');
-  setTimeout(() => {
-    introScreen.style.display = 'none';
-    gameMain.style.display = 'block';
-  }, 500);
-});
-
-
+function showGameSections() {
+  if (gameSectionEl) gameSectionEl.style.display = 'block';
+  if (submitSectionEl) submitSectionEl.style.display = 'block';
+  if (resultSectionEl) resultSectionEl.style.display = 'block';
+}
 
 function setStatus(text) {
   statusEl.textContent = text;
@@ -125,19 +136,11 @@ shootButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     const height = btn.dataset.height;
     const direction = btn.dataset.direction;
-    
-    // Deseleccionar tots els botons de xut
+
     shootButtons.forEach(b => b.classList.remove('selected'));
-    
-    // Seleccionar el botó clicat
     btn.classList.add('selected');
-    
-    // Guardar la selecció
     selectedShot = { height, direction };
-    
-    // Mostrar la selecció
     selectedShotEl.textContent = `Xut seleccionat: ${capitalize(height)} - ${capitalize(direction)}`;
-    
     updateSubmitButton();
   });
 });
@@ -147,19 +150,11 @@ saveButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     const height = btn.dataset.height;
     const direction = btn.dataset.direction;
-    
-    // Deseleccionar tots els botons d'aturada
+
     saveButtons.forEach(b => b.classList.remove('selected'));
-    
-    // Seleccionar el botó clicat
     btn.classList.add('selected');
-    
-    // Guardar la selecció
     selectedSave = { height, direction };
-    
-    // Mostrar la selecció
     selectedSaveEl.textContent = `Aturada seleccionada: ${capitalize(height)} - ${capitalize(direction)}`;
-    
     updateSubmitButton();
   });
 });
@@ -209,15 +204,15 @@ submitBtn.addEventListener('click', () => {
   if (!selectedShot.height || !selectedSave.height) {
     return alert('Has de seleccionar tant el xut com l\'aturada');
   }
-  
-  safeSend({ 
-    type: 'SUBMIT_MOVE', 
-    payload: { 
-      shot: selectedShot, 
-      save: selectedSave 
-    } 
+
+  safeSend({
+    type: 'SUBMIT_MOVE',
+    payload: {
+      shot: selectedShot,
+      save: selectedSave
+    }
   });
-  
+
   submitBtn.disabled = true;
 });
 

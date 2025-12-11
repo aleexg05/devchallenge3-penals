@@ -39,31 +39,18 @@ class GameManager {
       const m1 = room.moves[p1];
       const m2 = room.moves[p2];
 
-      let score1 = 0;
-      let score2 = 0;
+      const same = JSON.stringify(m1) === JSON.stringify(m2);
       let winner = 0;
-
-      // 🔑 Si les jugades són idèntiques → empat, no sumem punts
-      if (
-        JSON.stringify(m1.shot) === JSON.stringify(m2.shot) &&
-        JSON.stringify(m1.save) === JSON.stringify(m2.save)
-      ) {
-        winner = 0;
-      } else {
-        // Cada jugador xuta i l’altre intenta parar
-        score1 = this.calculateSaveScore(m2.save, m1.shot); // jugador 2 para el xut de jugador 1
-        score2 = this.calculateSaveScore(m1.save, m2.shot); // jugador 1 para el xut de jugador 2
-
-        room.scores[1] += score1;
-        room.scores[2] += score2;
-
-        if (score1 > score2) winner = 1;
-        else if (score2 > score1) winner = 2;
+      if (!same) {
+        winner = Math.random() < 0.5 ? 1 : 2;
       }
+
+      room.scores[winner]++;
 
       const result = {
         winner,
-        scores: { 1: room.scores[1], 2: room.scores[2] },
+        score1: room.scores[1],
+        score2: room.scores[2],
         round: room.rounds
       };
 
@@ -77,16 +64,6 @@ class GameManager {
     }
 
     return { ok: true, completed: false };
-  }
-
-  // 🔑 Aquesta funció ha d’estar dins de la classe
-  calculateSaveScore(save, shot) {
-    const matchHeight = save.height === shot.height;
-    const matchDirection = save.direction === shot.direction;
-
-    if (matchHeight && matchDirection) return 2;
-    if (matchHeight || matchDirection) return 1;
-    return 0;
   }
 
   leaveRoom(roomId, socketId) {

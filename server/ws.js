@@ -68,18 +68,17 @@ function setupWebSocket(server) {
         const res = gm.submitMove(meta.roomId, meta.socketId, payload);
         if (!res.ok) return send(ws, 'ERROR', res);
 
-       if (res.completed) {
-  broadcast(meta.roomId, 'ROUND_RESULT', {
-    score1: res.result.scores[1],
-    score2: res.result.scores[2],
-    winner: res.result.winner,
-    round: res.result.round
-  });
-  if (res.finished) {
-    broadcast(meta.roomId, 'GAME_OVER', { finalScore: res.finalScore });
-  }
-}
-
+        if (res.completed) {
+          broadcast(meta.roomId, 'ROUND_RESULT', {
+            score1: res.result.score1,
+            score2: res.result.score2,
+            winner: res.result.winner,
+            round: res.result.round
+          });
+          if (res.finished) {
+            broadcast(meta.roomId, 'GAME_OVER', { finalScore: res.finalScore });
+          }
+        }
       }
     });
 

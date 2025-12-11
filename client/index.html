@@ -45,16 +45,14 @@
       </div>
 
       <button id="start-game" class="start-btn">Començar a jugar</button>
-    </div>
-  </div>
 
-  <div class="intro-instructions">
-    <p><strong>Com jugar:</strong></p>
-    <p>1. Crea una sala o uneix-te amb un codi</p>
-    <p>2. Selecciona on vols xutar i on parar</p>
-    <p>3. Envia la teva jugada i espera el resultat</p>
-  </div>
-  </div>
+      <div class="intro-instructions">
+        <p><strong>Com jugar:</strong></p>
+        <p>1. Crea una sala o uneix-te amb un codi</p>
+        <p>2. Selecciona on vols xutar i on parar</p>
+        <p>3. Envia la teva jugada i espera el resultat</p>
+      </div>
+    </div>
   </div>
 
   <!-- Joc principal (ocult inicialment) -->
@@ -72,13 +70,13 @@
     </section>
 
     <!-- Porteries una al costat de l'altra -->
-    <section class="game-section">
+    <section class="game-section" id="game-section" style="display: none;">
       <div class="goals-container">
         <!-- Camp de joc amb porteria -->
         <div class="goal-wrapper">
           <h2>🥅 Xut</h2>
           <div id="game-field">
-            <img src="fotos/porteria.jpg" alt="Porteria" class="goal-image" />
+            <img src="fotos/porteria-xut.jpg" alt="Porteria" class="goal-image" />
 
             <!-- Botons de xut sobre la porteria -->
             <div class="shoot-buttons">
@@ -111,7 +109,7 @@
         <div class="goal-wrapper">
           <h2>🧤 Aturada</h2>
           <div id="save-field">
-            <img src="fotos/porteria.jpg" alt="Porteria" class="goal-image" />
+            <img src="fotos/porteria-xut.jpg" alt="Porteria" class="goal-image" />
 
             <!-- Botons d'aturada sobre la porteria -->
             <div class="save-buttons">
@@ -142,17 +140,18 @@
       </div>
     </section>
 
-    <section aria-labelledby="submit-section">
+    <section aria-labelledby="submit-section" id="submit-section" style="display: none;">
       <button type="submit" id="submitMove" disabled>Enviar tirada</button>
     </section>
 
-    <section aria-labelledby="result-section">
-      <h2 id="result-section">📊 Resultat</h2>
+    <section aria-labelledby="result-section" id="result-section" style="display: none;">
+      <h2>📊 Resultat</h2>
       <div id="result" aria-live="polite"></div>
     </section>
+    <a href="index.html" class="restart-btn">Tornar a jugar</a>
   </main>
 
-    <script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 
 </html>
