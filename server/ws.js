@@ -25,10 +25,14 @@ function setupWebSocket(server) {
   wss.on('connection', (ws) => {
     const socketId = Math.random().toString(36).slice(2, 10);
 
-    ws.on('message', (msg) => {
-      let data;
-      try { data = JSON.parse(msg); } catch { return; }
-      const { type, payload } = data;
+   ws.on('message', (msg) => {
+  let data;
+  try { data = JSON.parse(msg); } catch { return; }
+
+  console.log("SERVER REP:", JSON.stringify(data, null, 2)); // ✅ AQUI
+
+  const { type, payload } = data;
+
 
       if (type === 'ROOM_CREATE') {
         const roomId = gm.createRoom();
@@ -69,12 +73,18 @@ function setupWebSocket(server) {
         if (!res.ok) return send(ws, 'ERROR', res);
 
         if (res.completed) {
-          broadcast(meta.roomId, 'ROUND_RESULT', {
-            score1: res.result.score1,
-            score2: res.result.score2,
-            winner: res.result.winner,
-            round: res.result.round
-          });
+ broadcast(meta.roomId, 'ROUND_RESULT', {
+  score1: res.result.score1,
+  score2: res.result.score2,
+  winner: res.result.winner,
+  round: res.result.round,
+  puntsP1: res.result.puntsP1,
+  puntsP2: res.result.puntsP2
+});
+
+
+
+
           if (res.finished) {
             broadcast(meta.roomId, 'GAME_OVER', { finalScore: res.finalScore });
           }

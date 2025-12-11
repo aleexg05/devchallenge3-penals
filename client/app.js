@@ -96,6 +96,7 @@ function connect() {
       setStatus('Ronda finalitzada. Envia una nova tirada quan vulguis.');
       resetSelections();
       enableButtons();
+      console.log("PUNTS RONDA:", payload.puntsP1, payload.puntsP2);
     }
 
     if (type === 'GAME_OVER') {
@@ -199,12 +200,16 @@ joinBtn.addEventListener('click', () => {
   if (!id) return alert('Introdueix un ID de sala');
   safeSend({ type: 'ROOM_JOIN', payload: { roomId: id } });
 });
-
 submitBtn.addEventListener('click', () => {
   if (!ready) return alert('Encara no esteu tots a punt');
   if (!selectedShot.height || !selectedSave.height) {
     return alert('Has de seleccionar tant el xut com l\'aturada');
   }
+
+  console.log("CLIENT ENVIA:", {
+    shot: selectedShot,
+    save: selectedSave
+  });
 
   safeSend({
     type: 'SUBMIT_MOVE',
@@ -217,6 +222,7 @@ submitBtn.addEventListener('click', () => {
   submitBtn.disabled = true;
 });
 
+
 function ensureConnection() {
   if (!ws || ws.readyState !== WebSocket.OPEN) connect();
 }
@@ -228,3 +234,43 @@ setStatus('Crea o uneix-te a una sala per començar.');
 //   document.getElementById("result-section").style.display = "block";
 //   document.getElementById("restart-btn").style.display = "block";
 // }
+
+// --- Reinici sense animació ---
+const params = new URLSearchParams(window.location.search);
+const isRestart = params.get("restart") === "1";
+
+if (isRestart) {
+  // Amagar animació i mostrar pantalla d'inici directament
+  penaltyAnimation.style.display = "none";
+  introScreen.style.display = "block";
+  introContent.classList.add("show");
+
+  // Canviar el text
+  document.querySelector(".intro-title").textContent = "Torna a jugar";
+  document.querySelector(".intro-subtitle").textContent = "Preparat per un altre duel?";
+
+  // Amagar tot el joc
+  gameMain.style.display = "none";
+  // --- Reinici sense animació ---
+const params = new URLSearchParams(window.location.search);
+const isRestart = params.get("restart") === "1";
+
+if (isRestart) {
+  // Amagar animació i mostrar pantalla d'inici directament
+  penaltyAnimation.style.display = "none";
+  introScreen.style.display = "block";
+  introContent.classList.add("show");
+
+  // Canviar el text
+  document.querySelector(".intro-title").textContent = "Torna a jugar";
+  document.querySelector(".intro-subtitle").textContent = "Preparat per un altre duel?";
+
+  // Amagar tot el joc
+  gameMain.style.display = "none";
+introScreen.style.display = "flex";
+introScreen.style.justifyContent = "center";
+introScreen.style.alignItems = "center";
+
+}
+
+}
