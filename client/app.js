@@ -104,6 +104,7 @@ function connect() {
       setStatus('Partida finalitzada.');
       submitBtn.disabled = true;
       disableButtons();
+      document.querySelector('.restart-btn').style.display = 'block';
     }
 
     if (type === 'ERROR') {
@@ -221,3 +222,9 @@ function ensureConnection() {
 }
 
 setStatus('Crea o uneix-te a una sala per començar.');
+
+// Ejemplo: al finalizar la partida
+// function endGame() {
+//   document.getElementById("result-section").style.display = "block";
+//   document.getElementById("restart-btn").style.display = "block";
+// }

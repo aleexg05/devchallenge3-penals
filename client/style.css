@@ -147,23 +147,25 @@ h2 {
   margin-bottom: 2rem;
   text-decoration: none;
 
-}.restart-btn{
-  display: inline-block;
-    padding: 1rem 3rem;
+}
+
+.restart-btn {
+  display: none;
+  text-align: center;
+  margin: 30px auto 0;
+  padding: 1rem 3rem;
   font-size: 15px;
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
   color: white;
-  border: none; 
+  border: none;
   border-radius: 50px;
   cursor: pointer;
   font-weight: bold;
-  text-transform: uppercase; 
-  letter-spacing: 1px; 
+  text-transform: uppercase;
+  letter-spacing: 1px;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 30px rgba(74, 157, 95, 0.4); 
+  box-shadow: 0 10px 30px rgba(74, 157, 95, 0.4);
   text-decoration: none;
-  padding:10px;
-  margin-top: 30px;
 }
 
 .start-btn:hover {
