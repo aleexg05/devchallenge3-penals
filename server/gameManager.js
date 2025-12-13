@@ -14,6 +14,17 @@ maxPlayers: 2
 });
 return roomId;
 }
+createRoom() {
+const roomId = Math.random().toString(36).slice(2, 8);
+this.rooms.set(roomId, {
+players: [],
+moves: {},
+scores: { 1: 0, 2: 0 },
+rounds: 0,
+maxPlayers: 2
+});
+return roomId;
+}
 
 joinRoom(roomId, socketId) {
 const room = this.rooms.get(roomId);
@@ -26,13 +37,16 @@ const number = room.players.length;
 return { ok: true, number, ready: room.players.length === room.maxPlayers };
 }
 
-compare(shoot, defend) {
-if (!shoot || !defend) return 0;
-let points = 0;
-if (shoot.height === defend.height) points++;
-if (shoot.direction === defend.direction) points++;
-return points; // 0, 1 o 2
-}
+  // Lògica de punts: compara xut vs aturada
+  compare(shoot, defend) {
+    if (!shoot || !defend) return 0;
+
+    let points = 0;
+    if (shoot.height === defend.height) points++;
+    if (shoot.direction === defend.direction) points++;
+
+    return points; // 0, 1 o 2 punts
+  }
 
 submitMove(roomId, socketId, move) {
 const room = this.rooms.get(roomId);
@@ -45,16 +59,19 @@ room.moves[socketId] = move;
 if (Object.keys(room.moves).length === room.players.length) {
 room.rounds++;
 
-const [p1, p2] = room.players;
-const m1 = room.moves[p1];
-const m2 = room.moves[p2];
+      const [p1, p2] = room.players;
+      const m1 = room.moves[p1]; // { shot, save }
+      const m2 = room.moves[p2]; // { shot, save }
 
-// Punts del porter segons encert d'alçada i/o direcció del xut contrari
-const puntsP1 = this.compare(m2.shot, m1.save); // Punts per P1 aturant xut de P2
-const puntsP2 = this.compare(m1.shot, m2.save); // Punts per P2 aturant xut de P1
+      // Jugador 1: compara el seu TIRO amb la PARADA del jugador 2
+      const puntsP1 = this.compare(m1.shot, m2.save);
+      
+      // Jugador 2: compara el seu TIRO amb la PARADA del jugador 1
+      const puntsP2 = this.compare(m2.shot, m1.save);
 
-room.scores[1] += puntsP1;
-room.scores[2] += puntsP2;
+      // Actualitzem marcadors
+      room.scores[1] += puntsP1;
+      room.scores[2] += puntsP2;
 
 let winner = 0;
 if (room.scores[1] > room.scores[2]) winner = 1;
