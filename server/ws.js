@@ -4,8 +4,8 @@ const GameManager = require('./gameManager');
 function setupWebSocket(server) {
   const wss = new WebSocketServer({ server });
   const gm = new GameManager();
-  const sockets = new Map(); // ws -> { roomId, socketId, playerNumber }
-  const creators = new Map(); // roomId -> creatorId
+  const sockets = new Map();   // ws -> { roomId, socketId, playerNumber }
+  const creators = new Map();  // roomId -> creatorId
 
   function send(ws, type, payload) {
     if (ws.readyState === ws.OPEN) {
@@ -25,14 +25,11 @@ function setupWebSocket(server) {
   wss.on('connection', (ws) => {
     const socketId = Math.random().toString(36).slice(2, 10);
 
-   ws.on('message', (msg) => {
-  let data;
-  try { data = JSON.parse(msg); } catch { return; }
+    ws.on('message', (msg) => {
+      let data;
+      try { data = JSON.parse(msg); } catch { return; }
 
-  console.log("SERVER REP:", JSON.stringify(data, null, 2)); // ✅ AQUI
-
-  const { type, payload } = data;
-
+      const { type, payload } = data;
 
       if (type === 'ROOM_CREATE') {
         const roomId = gm.createRoom();
@@ -73,21 +70,43 @@ function setupWebSocket(server) {
         if (!res.ok) return send(ws, 'ERROR', res);
 
         if (res.completed) {
- broadcast(meta.roomId, 'ROUND_RESULT', {
-  score1: res.result.score1,
-  score2: res.result.score2,
-  winner: res.result.winner,
-  round: res.result.round,
-  puntsP1: res.result.puntsP1,
-  puntsP2: res.result.puntsP2
-});
+          // Enviem resultats personalitzats (Tu/Rival) per a cada client
+          wss.clients.forEach((client) => {
+            const m = sockets.get(client);
+            if (!m || m.roomId !== meta.roomId || client.readyState !== client.OPEN) return;
 
+            const you = m.playerNumber;
+            const rival = you === 1 ? 2 : 1;
 
+            const tuScore = res.result[`score${you}`];
+            const rivalScore = res.result[`score${rival}`];
+            const tuPunts = you === 1 ? res.result.puntsP1 : res.result.puntsP2;
+            const rivalPunts = you === 1 ? res.result.puntsP2 : res.result.puntsP1;
 
+            const outcome = res.result.winner === 0
+              ? 'draw'
+              : res.result.winner === you ? 'win' : 'lose';
 
-          if (res.finished) {
-            broadcast(meta.roomId, 'GAME_OVER', { finalScore: res.finalScore });
-          }
+            send(client, 'ROUND_RESULT', {
+              round: res.result.round,
+              tuScore,
+              rivalScore,
+              tuPunts,
+              rivalPunts,
+              outcome
+            });
+
+            if (res.finished) {
+              const finalOutcome = res.finalWinner === 0
+                ? 'draw'
+                : res.finalWinner === you ? 'win' : 'lose';
+
+              send(client, 'GAME_OVER', {
+                finalScore: res.finalScore,
+                finalOutcome
+              });
+            }
+          });
         }
       }
     });

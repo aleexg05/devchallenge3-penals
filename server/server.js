@@ -12,7 +12,7 @@ app.use(express.json());
 app.use('/', express.static(path.join(__dirname, '..', 'client')));
 
 // Endpoint de prova
-app.get('/health', (_req, res) => res.json({ status: 'ok' }));
+app.get('/health', (_req, res) => res.json({ status: 'ok' })); 
 
 const server = http.createServer(app);
 setupWebSocket(server);

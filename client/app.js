@@ -88,11 +88,10 @@ function connect() {
     }
 
     if (type === 'ROUND_RESULT') {
-      const { score1, score2, winner, round } = payload;
-      const you = player === 1 ? score1 : score2;
-      const opp = player === 1 ? score2 : score1;
-      const msgWinner = winner === 0 ? 'Empat' : (winner === player ? 'Has guanyat!' : 'Has perdut');
-      resultEl.textContent = `Ronda ${round} → Tu: ${you} | Rival: ${opp} → ${msgWinner}`;
+      const { round, tuScore, rivalScore, tuPunts, rivalPunts, outcome } = payload;
+
+      const msgWinner = outcome === 'draw' ? 'Empat' : (outcome === 'win' ? 'Has guanyat!' : 'Has perdut');
+      resultEl.textContent = `Ronda ${round} → Tu: ${tuScore} (Punts ronda: ${tuPunts}) | Rival: ${rivalScore} (Punts ronda: ${rivalPunts}) → ${msgWinner}`;
       setStatus('Ronda finalitzada. Envia una nova tirada quan vulguis.');
       resetSelections();
       enableButtons();
@@ -100,8 +99,9 @@ function connect() {
     }
 
     if (type === 'GAME_OVER') {
-      const { finalScore } = payload;
-      resultEl.textContent = `🏁 Partida acabada! Puntuació final → J1: ${finalScore[1]} | J2: ${finalScore[2]}`;
+      const { finalScore, finalOutcome } = payload;
+      const finalMsg = finalOutcome === 'draw' ? 'Empat final' : (finalOutcome === 'win' ? 'Has guanyat la partida!' : 'Has perdut la partida');
+      resultEl.textContent = `🏁 Partida acabada! Puntuació final → J1: ${finalScore[1]} | J2: ${finalScore[2]} → ${finalMsg}`;
       setStatus('Partida finalitzada.');
       submitBtn.disabled = true;
       disableButtons();
@@ -237,40 +237,17 @@ setStatus('Crea o uneix-te a una sala per començar.');
 
 // --- Reinici sense animació ---
 const params = new URLSearchParams(window.location.search);
-const isRestart = params.get("restart") === "1";
+const isRestart = params.get('restart') === '1';
 
 if (isRestart) {
-  // Amagar animació i mostrar pantalla d'inici directament
-  penaltyAnimation.style.display = "none";
-  introScreen.style.display = "block";
-  introContent.classList.add("show");
+  penaltyAnimation.style.display = 'none';
+  introScreen.style.display = 'flex';
+  introScreen.style.justifyContent = 'center';
+  introScreen.style.alignItems = 'center';
+  introContent.classList.add('show');
 
-  // Canviar el text
-  document.querySelector(".intro-title").textContent = "Torna a jugar";
-  document.querySelector(".intro-subtitle").textContent = "Preparat per un altre duel?";
+  document.querySelector('.intro-title').textContent = 'Torna a jugar';
+  document.querySelector('.intro-subtitle').textContent = 'Preparat per un altre duel?';
 
-  // Amagar tot el joc
-  gameMain.style.display = "none";
-  // --- Reinici sense animació ---
-const params = new URLSearchParams(window.location.search);
-const isRestart = params.get("restart") === "1";
-
-if (isRestart) {
-  // Amagar animació i mostrar pantalla d'inici directament
-  penaltyAnimation.style.display = "none";
-  introScreen.style.display = "block";
-  introContent.classList.add("show");
-
-  // Canviar el text
-  document.querySelector(".intro-title").textContent = "Torna a jugar";
-  document.querySelector(".intro-subtitle").textContent = "Preparat per un altre duel?";
-
-  // Amagar tot el joc
-  gameMain.style.display = "none";
-introScreen.style.display = "flex";
-introScreen.style.justifyContent = "center";
-introScreen.style.alignItems = "center";
-
-}
-
+  gameMain.style.display = 'none';
 }
