@@ -17,5 +17,5 @@ app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 const server = http.createServer(app);
 setupWebSocket(server);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 80;
 server.listen(PORT, () => console.log(`Server on http://localhost:${PORT}`));
