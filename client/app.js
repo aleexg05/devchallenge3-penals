@@ -1,3 +1,5 @@
+let roundsPlayed = 0;
+
 const wsUrl = `${location.origin.replace('http', 'ws')}`;
 let ws;
 let player;
@@ -12,6 +14,7 @@ const statusEl = document.getElementById('status');
 const createBtn = document.getElementById('createRoom');
 const joinBtn = document.getElementById('joinRoom');
 const roomInput = document.getElementById('roomId');
+const copyBtn = document.getElementById('copyRoom');
 const submitBtn = document.getElementById('submitMove');
 const resultEl = document.getElementById('result');
 const selectedShotEl = document.getElementById('selected-shot');
@@ -56,19 +59,52 @@ function connect() {
 
   ws.addEventListener('open', () => setStatus('✅ Connectat'));
   ws.addEventListener('close', () => setStatus('❌ Desconnectat'));
-  ws.addEventListener('message', (ev) => {
-    const { type, payload } = JSON.parse(ev.data);
 
+  
+  ws.addEventListener('message', (ev) => {
+   
+
+    const { type, payload } = JSON.parse(ev.data);
+ if (type === 'ROUND_ACK') {
+  console.log("ACK rebut, ronda completada:", payload.round);
+}
+    if (type === 'MOVE_STORED') {
+      roundsPlayed = payload.submitted;
+      const remaining = payload.remaining;
+      const opponentSubmitted = payload.opponentSubmitted;
+
+      if (payload.playerDone) {
+        setStatus(`Has enviat les 2 tirades. Esperant el rival (porta ${opponentSubmitted}/2).`);
+        submitBtn.disabled = true;
+        disableButtons();
+      } else {
+        setStatus(`Tirada guardada. Et resten ${remaining} tirades. El rival porta ${opponentSubmitted}/2.`);
+      }
+
+      return;
+    }
     if (type === 'ROOM_CREATED') {
       roomId = payload.roomId;
+      player = payload.player;
+      ready = payload.ready || false;
       roomInput.value = roomId;
+      copyBtn.style.display = 'inline-block';
+      roundsPlayed = 0;
+      enableButtons();
+      resetSelections();
+      resultEl.innerHTML = '';
       setStatus(`Sala creada: ${roomId}. Comparteix l'ID amb el teu rival.`);
       showGameSections();
+      updateSubmitButton();
     }
 
     if (type === 'JOINED') {
       player = payload.player;
       ready = payload.ready;
+      roundsPlayed = 0;
+      enableButtons();
+      resetSelections();
+      resultEl.innerHTML = '';
       setStatus(`Ets el jugador ${player}.` + (ready ? ' Tots a punt.' : ' Esperant rival...'));
       showGameSections();
       updateSubmitButton();
@@ -99,9 +135,14 @@ function connect() {
     }
 
     if (type === 'GAME_OVER') {
-      const { finalScore, finalOutcome } = payload;
-      const finalMsg = finalOutcome === 'draw' ? 'Empat final' : (finalOutcome === 'win' ? 'Has guanyat la partida!' : 'Has perdut la partida');
-      resultEl.textContent = `🏁 Partida acabada! Puntuació final → J1: ${finalScore[1]} | J2: ${finalScore[2]} → ${finalMsg}`;
+      const { finalScore, finalOutcome, history, you } = payload;
+
+      // Si per qualsevol motiu 'player' no estava establert, fem servir 'you' del servidor
+      if (!player) player = you;
+
+      console.log('GAME_OVER rebut:', { finalScore, finalOutcome, history, player });
+
+      renderFinalResults(finalOutcome, finalScore, history);
       setStatus('Partida finalitzada.');
       submitBtn.disabled = true;
       disableButtons();
@@ -189,9 +230,99 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+function formatMoveLabel(move) {
+  if (!move || !move.height || !move.direction) return 'Sense dades';
+  return `${capitalize(move.height)} - ${capitalize(move.direction)}`;
+}
+
+function renderFinalResults(finalOutcome, finalScore, history) {
+  console.log('renderFinalResults cridat amb:', { player, finalOutcome, finalScore, history });
+
+  const outcomeText = finalOutcome === 'draw'
+    ? 'Empat final'
+    : finalOutcome === 'win'
+      ? 'Has guanyat la partida!'
+      : 'Has perdut la partida';
+
+  const outcomeClass = finalOutcome === 'draw' ? 'badge-neutral' : finalOutcome === 'win' ? 'badge-win' : 'badge-lose';
+
+  // Determinar quin jugador és el local
+  const isPlayer1 = player === 1;
+  const myPlayerKey = isPlayer1 ? 'p1' : 'p2';
+  const rivalPlayerKey = isPlayer1 ? 'p2' : 'p1';
+  const myPlayerNum = player;
+  const rivalPlayerNum = player === 1 ? 2 : 1;
+
+  console.log('Claus calculades:', { myPlayerKey, rivalPlayerKey, myPlayerNum, rivalPlayerNum });
+
+  const roundsHtml = history.map((r) => {
+    const rivalShot = r[rivalPlayerKey].shot;
+    const mySave = r[myPlayerKey].save;
+    const myPoints = r[myPlayerKey].punts;
+
+    console.log(`Ronda ${r.round}:`, { rivalShot, mySave, myPoints });
+
+    return `
+      <div class="round-card">
+        <div class="round-header">
+          <span class="round-pill">Ronda ${r.round}</span>
+          <span class="round-points">Punts: ${myPoints}</span>
+        </div>
+        <div class="round-body-simple">
+          <div class="move-line"><span class="label">Xut del rival</span><span class="value">${formatMoveLabel(rivalShot)}</span></div>
+          <div class="move-line"><span class="label">La teva aturada</span><span class="value">${formatMoveLabel(mySave)}</span></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  console.log('Puntuacions finals mostrades:', {
+    meva: finalScore[myPlayerNum],
+    rival: finalScore[rivalPlayerNum]
+  });
+
+  resultEl.innerHTML = `
+    <div class="results-card">
+      <div class="results-header">
+        <h3>🏁 Resultat final</h3>
+        <span class="badge ${outcomeClass}">${outcomeText}</span>
+      </div>
+      <div class="scoreboard">
+        <div class="score-box">
+          <div class="score-label">Tu</div>
+          <div class="score-value">${finalScore[myPlayerNum] || 0}</div>
+        </div>
+        <div class="score-box">
+          <div class="score-label">Rival</div>
+          <div class="score-value">${finalScore[rivalPlayerNum] || 0}</div>
+        </div>
+      </div>
+      <div class="rounds-grid">
+        ${roundsHtml}
+      </div>
+    </div>
+  `;
+}
+
 createBtn.addEventListener('click', () => {
   ensureConnection();
   safeSend({ type: 'ROOM_CREATE' });
+});
+
+copyBtn.addEventListener('click', async () => {
+  const code = roomInput.value.trim();
+  if (!code) return;
+  
+  try {
+    await navigator.clipboard.writeText(code);
+    const originalText = copyBtn.textContent;
+    copyBtn.textContent = '✅ Copiat!';
+    setTimeout(() => {
+      copyBtn.textContent = originalText;
+    }, 2000);
+  } catch (err) {
+    alert('No s\'ha pogut copiar el codi');
+  }
 });
 
 joinBtn.addEventListener('click', () => {
@@ -219,7 +350,20 @@ submitBtn.addEventListener('click', () => {
     }
   });
 
+  // ✅ Desmarca seleccions immediatament
+  resetSelections();
+
+  // ✅ Desactiva el botó fins que torni a seleccionar
   submitBtn.disabled = true;
+
+  // ✅ Comptador de rondes del jugador
+  roundsPlayed++;
+
+  // ✅ Si ja ha fet les 2 rondes → bloquejar definitivament
+  if (roundsPlayed >= 2) {
+    submitBtn.disabled = true;
+    disableButtons();
+  }
 });
 
 

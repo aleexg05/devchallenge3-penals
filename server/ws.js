@@ -39,7 +39,7 @@ function setupWebSocket(server) {
         sockets.set(ws, { roomId, socketId, playerNumber: 1 });
         creators.set(roomId, socketId);
 
-        send(ws, 'ROOM_CREATED', { roomId });
+        send(ws, 'ROOM_CREATED', { roomId, player: 1, ready: false });
       }
 
       if (type === 'ROOM_JOIN') {
@@ -69,45 +69,35 @@ function setupWebSocket(server) {
         const res = gm.submitMove(meta.roomId, meta.socketId, payload);
         if (!res.ok) return send(ws, 'ERROR', res);
 
-        if (res.completed) {
-          // Enviem resultats personalitzats (Tu/Rival) per a cada client
-          wss.clients.forEach((client) => {
-            const m = sockets.get(client);
-            if (!m || m.roomId !== meta.roomId || client.readyState !== client.OPEN) return;
-
-            const you = m.playerNumber;
-            const rival = you === 1 ? 2 : 1;
-
-            const tuScore = res.result[`score${you}`];
-            const rivalScore = res.result[`score${rival}`];
-            const tuPunts = you === 1 ? res.result.puntsP1 : res.result.puntsP2;
-            const rivalPunts = you === 1 ? res.result.puntsP2 : res.result.puntsP1;
-
-            const outcome = res.result.winner === 0
-              ? 'draw'
-              : res.result.winner === you ? 'win' : 'lose';
-
-            send(client, 'ROUND_RESULT', {
-              round: res.result.round,
-              tuScore,
-              rivalScore,
-              tuPunts,
-              rivalPunts,
-              outcome
-            });
-
-            if (res.finished) {
-              const finalOutcome = res.finalWinner === 0
-                ? 'draw'
-                : res.finalWinner === you ? 'win' : 'lose';
-
-              send(client, 'GAME_OVER', {
-                finalScore: res.finalScore,
-                finalOutcome
-              });
-            }
+        // Progress info for this player
+        if (!res.completed) {
+          send(ws, 'MOVE_STORED', {
+            submitted: res.playerMoves,
+            remaining: res.remaining,
+            opponentSubmitted: res.opponentMoves,
+            playerDone: res.playerDone,
+            opponentDone: res.opponentDone
           });
+          return;
         }
+
+        // When both players finished their two moves, broadcast final result
+        wss.clients.forEach((client) => {
+          const m = sockets.get(client);
+          if (!m || m.roomId !== meta.roomId || client.readyState !== client.OPEN) return;
+
+          const you = m.playerNumber;
+          const finalOutcome = res.finalWinner === 0
+            ? 'draw'
+            : res.finalWinner === you ? 'win' : 'lose';
+
+          send(client, 'GAME_OVER', {
+            finalScore: res.finalScore,
+            finalOutcome,
+            history: res.history,
+            you
+          });
+        });
       }
     });
 

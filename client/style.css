@@ -11,6 +11,11 @@
 
 * {
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+html, body {
+  height: 100%;
 }
 
 body {
@@ -19,6 +24,7 @@ body {
   background: linear-gradient(135deg, #1a4d2e 0%, #2d5f3e 50%, #4a9d5f 100%);
   color: var(--text);
   min-height: 100vh;
+  overflow-y: auto;
 }
 
 main {
@@ -26,6 +32,7 @@ main {
   width: 100%;
   margin: 0;
   padding: 2rem 3rem;
+  overflow: visible;
 }
 
 section {
@@ -558,5 +565,429 @@ button[disabled] {
 
   main {
     padding: 1.5rem;
+  }
+}
+
+/* Resultats finals visuals */
+.results-card {
+  background: linear-gradient(135deg, rgba(35, 77, 53, 0.9), rgba(45, 95, 62, 0.9));
+  border: 1px solid rgba(93, 179, 112, 0.3);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.results-header h3 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.badge {
+  padding: 0.5rem 0.85rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.badge-win {
+  background: linear-gradient(135deg, #50c878, #4a9d5f);
+  color: #0f2d1c;
+}
+
+.badge-lose {
+  background: linear-gradient(135deg, #ef4444, #b42323);
+  color: #fff;
+}
+
+.badge-neutral {
+  background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+  color: #0f172a;
+}
+
+.scoreboard {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.score-box {
+  background: rgba(26, 77, 46, 0.7);
+  border: 1px solid rgba(93, 179, 112, 0.25);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.score-label {
+  font-size: 0.95rem;
+  color: var(--accent-2);
+  letter-spacing: 0.5px;
+}
+
+.score-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.rounds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.round-card {
+  background: rgba(26, 61, 46, 0.8);
+  border: 1px solid rgba(93, 179, 112, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.round-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  gap: 0.5rem;
+}
+
+.round-pill {
+  background: rgba(93, 179, 112, 0.2);
+  color: var(--accent-2);
+  padding: 0.35rem 0.75rem;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.round-score {
+  font-weight: 700;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.round-points {
+  font-weight: 700;
+  color: var(--accent-2);
+  font-size: 0.95rem;
+}
+
+.round-body-simple {
+  background: rgba(35, 77, 53, 0.7);
+  border: 1px solid rgba(93, 179, 112, 0.15);
+  border-radius: 10px;
+  padding: 0.75rem;
+}
+
+.round-body {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.player-col {
+  background: rgba(35, 77, 53, 0.7);
+  border: 1px solid rgba(93, 179, 112, 0.15);
+  border-radius: 10px;
+  padding: 0.75rem;
+}
+
+.player-title {
+  font-weight: 700;
+  color: var(--accent-2);
+  margin-bottom: 0.5rem;
+}
+
+.move-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  margin-bottom: 0.35rem;
+}
+
+.label {
+  color: #9fb8a8;
+}
+
+.value {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.points {
+  margin-top: 0.4rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+@media (max-width: 720px) {
+  .results-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .round-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Responsive mòbil */
+@media (max-width: 480px) {
+  body {
+    font-size: 16px;
+    overflow-y: auto;
+  }
+
+  main {
+    padding: 1rem;
+    overflow-y: auto;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  section {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  .room-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .room-actions button,
+  .room-actions input {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  #status {
+    font-size: 0.95rem;
+  }
+
+  .intro-content {
+    padding: 1.25rem;
+  }
+
+  .intro-title {
+    font-size: 1.75rem;
+  }
+
+  .intro-subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .intro-features {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .start-btn,
+  .restart-btn {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
+  }
+
+  .goals-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .goal-wrapper h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .shoot-buttons,
+  .save-buttons {
+    gap: 8px;
+    padding: 7%;
+  }
+
+  .shoot-btn,
+  .save-btn {
+    font-size: 1.6rem; /* icones més grans per tacte mòbil */
+    min-height: 42px;
+    border-width: 2px;
+  }
+
+  .selection-display {
+    font-size: 0.95rem;
+    padding: 0.6rem;
+  }
+
+  #submitMove {
+    max-width: none;
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .scoreboard {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .score-value {
+    font-size: 1.5rem;
+  }
+
+  .rounds-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .round-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
+
+/* Extra responsive per a pantalles molt petites (<=360px) */
+@media (max-width: 360px) {
+  .intro-content {
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+
+  .intro-title {
+    font-size: 1.2rem;
+  }
+
+  .intro-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .feature-icon {
+    font-size: 2rem;
+  }
+
+  .field {
+    max-width: 300px;
+    aspect-ratio: 16/12;
+  }
+
+  .goalkeeper { font-size: 2rem; }
+  .ball { font-size: 1.8rem; }
+  .player { font-size: 2.2rem; }
+
+  .shoot-buttons,
+  .save-buttons {
+    gap: 5px;
+    padding: 5%;
+  }
+
+  .shoot-btn,
+  .save-btn {
+    font-size: 1.3rem; /* una mica més petites però encara còmodes */
+    min-height: 36px;
+  }
+
+  #submitMove {
+    font-size: 0.95rem;
+    padding: 0.8rem;
+  }
+
+  /* Blocs del joc més petits */
+  .goal-wrapper {
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+
+  .goal-wrapper h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .selection-display {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .results-card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .results-header h3 { font-size: 1.1rem; }
+  .badge { font-size: 0.85rem; padding: 0.4rem 0.7rem; }
+
+  .score-box { padding: 0.75rem; }
+  .score-label { font-size: 0.85rem; }
+  .score-value { font-size: 1.25rem; }
+
+  .round-card { padding: 0.75rem; }
+  .round-pill { font-size: 0.85rem; padding: 0.3rem 0.6rem; }
+  .round-points { font-size: 0.85rem; }
+  .move-line { font-size: 0.85rem; }
+}
+
+/* Animació adaptada per mòbils (<=480px) */
+@keyframes ballKickMobile {
+  0% {
+    left: 50%;
+    transform: translateX(-50%) scale(1);
+  }
+  100% {
+    bottom: 35%;
+    left: 40%;
+    transform: translateX(-50%) scale(0.7) rotate(360deg);
+  }
+}
+
+@keyframes keeperDiveMobile {
+  0% {
+    left: 50%;
+    top: 55%;
+    transform: translateX(-50%) rotate(0deg);
+  }
+  100% {
+    left: 40%;
+    top: 58%;
+    transform: translateX(-50%) rotate(-35deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .penalty-animation {
+    height: 60vh;
+  }
+  .field {
+    max-width: 420px;
+    aspect-ratio: 16/11;
+  }
+  .goal-bg {
+    border-radius: 10px;
+  }
+  .player {
+    bottom: 8%;
+    font-size: 3rem;
+  }
+  .ball {
+    bottom: 12%;
+    font-size: 2.2rem;
+    animation: ballKickMobile 2s ease-in-out 2s;
+  }
+  .goalkeeper {
+    top: 58%;
+    font-size: 2.8rem;
+    animation: keeperDiveMobile 1.5s ease-out 3s;
   }
 }
