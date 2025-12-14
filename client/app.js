@@ -43,7 +43,7 @@ setTimeout(() => {
     penaltyAnimation.style.display = 'none';
     introContent.classList.add('show');
   }, 500);
-}, 4500);
+}, 3200);
 
 // Event del botó començar
 startBtn.addEventListener('click', () => {
