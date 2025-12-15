@@ -471,7 +471,7 @@ button[disabled] {
 .save-buttons {
   position: absolute;
   margin-top: -20px;
-  top:0px;
+  top: 0px;
   left: 0px;
   width: 100%;
   height: 10%;
@@ -492,6 +492,9 @@ button[disabled] {
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .shoot-btn:hover,
@@ -814,8 +817,8 @@ button[disabled] {
   }
 
   .goal-wrapper {
-    width: 80%;
-    max-width: 320px;
+    width: 100%;
+    max-width: 480px;
     padding: 0.85rem;
   }
 
@@ -825,24 +828,16 @@ button[disabled] {
   }
 
   .goal-image {
-    max-height: 220px;
+    max-height: 320px;
     object-fit: cover;
   }
 
-  .shoot-buttons,
-  .save-buttons {
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    gap: 8px;
-    padding: 6%;
-  }
+
 
   .shoot-btn,
   .save-btn {
     font-size: 1.4rem; /* icones més grans per tacte mòbil */
-    min-height: 40px;
+    min-height: 24px;
     border-width: 2px;
   }
 
@@ -909,14 +904,14 @@ button[disabled] {
 
   .shoot-buttons,
   .save-buttons {
+    --buttons-padding: 5%;
     gap: 5px;
-    padding: 5%;
   }
 
   .shoot-btn,
   .save-btn {
     font-size: 1.3rem; /* una mica més petites però encara còmodes */
-    min-height: 36px;
+   
   }
 
   #submitMove {
@@ -1027,14 +1022,15 @@ button[disabled] {
 }
 
 
-/* Botons de xut i aturada */
+/* Valors per modificar la mida i la posició dels botons de xut i aturada */
+/* Valors per modificar la mida i la posició dels botons de xut i aturada */
 .shoot-buttons,
 .save-buttons {
   position: absolute;
-  top: 5px;
-  left: 5px;
-  width: 80%;
-  height: 35%;
+  top: 25px;
+  left: 12px;
+  width: 290px;
+  height: 145px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
@@ -1052,4 +1048,5 @@ button[disabled] {
   transition: all 0.3s ease;
   backdrop-filter: blur(2px);
 }
+responsive dels contenidors de xut i aturada
 }
