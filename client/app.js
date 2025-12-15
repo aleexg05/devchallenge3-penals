@@ -6,6 +6,14 @@ let player;
 let roomId;
 let ready = false;
 
+// Cargar roomId de localStorage si existe
+const savedRoomId = localStorage.getItem('currentRoomId');
+const savedPlayerId = localStorage.getItem('currentPlayerId');
+if (savedRoomId) {
+  roomId = savedRoomId;
+  player = parseInt(savedPlayerId);
+}
+
 // Seleccions del jugador
 let selectedShot = { height: null, direction: null };
 let selectedSave = { height: null, direction: null };
@@ -57,7 +65,14 @@ startBtn.addEventListener('click', () => {
 function connect() {
   ws = new WebSocket(wsUrl);
 
-  ws.addEventListener('open', () => setStatus('✅ Connectat'));
+  ws.addEventListener('open', () => {
+    setStatus('✅ Connectat');
+    // Si hay una sala guardada, intenta reconectarse automáticamente
+    if (savedRoomId && savedPlayerId) {
+      setStatus('🔄 Reconnectant a la sala...');
+      ws.send(JSON.stringify({ type: 'JOIN_ROOM', payload: { roomId: savedRoomId } }));
+    }
+  });
   ws.addEventListener('close', () => setStatus('❌ Desconnectat'));
 
   
@@ -93,6 +108,9 @@ function connect() {
       enableButtons();
       resetSelections();
       resultEl.innerHTML = '';
+      // Guardar en localStorage
+      localStorage.setItem('currentRoomId', roomId);
+      localStorage.setItem('currentPlayerId', player);
       setStatus(`Sala creada: ${roomId}. Comparteix l'ID amb el teu rival.`);
       showGameSections();
       updateSubmitButton();
@@ -102,6 +120,9 @@ function connect() {
       player = payload.player;
       ready = payload.ready;
       roundsPlayed = 0;
+      // Guardar en localStorage
+      localStorage.setItem('currentRoomId', roomId);
+      localStorage.setItem('currentPlayerId', player);
       enableButtons();
       resetSelections();
       resultEl.innerHTML = '';
@@ -147,6 +168,9 @@ function connect() {
       submitBtn.disabled = true;
       disableButtons();
       document.querySelector('.restart-btn').style.display = 'block';
+      // Limpiar localStorage cuando termina la partida
+      localStorage.removeItem('currentRoomId');
+      localStorage.removeItem('currentPlayerId');
     }
 
     if (type === 'ERROR') {
