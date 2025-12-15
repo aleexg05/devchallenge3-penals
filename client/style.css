@@ -72,6 +72,8 @@ h2 {
   align-items: center;
   z-index: 1000;
   animation: fadeIn 0.5s ease-in;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .intro-content {
@@ -82,6 +84,8 @@ h2 {
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   animation: slideUp 0.8s ease-out;
+  margin: 2rem auto;
+  max-height: none;
 }
 
 .intro-title {

@@ -314,13 +314,30 @@ copyBtn.addEventListener('click', async () => {
   if (!code) return;
   
   try {
-    await navigator.clipboard.writeText(code);
+    // Intentar amb la API moderna primer
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(code);
+    } else {
+      // Mètode alternatiu per contextos no segurs
+      const textArea = document.createElement('textarea');
+      textArea.value = code;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      document.execCommand('copy');
+      textArea.remove();
+    }
+    
     const originalText = copyBtn.textContent;
     copyBtn.textContent = '✅ Copiat!';
     setTimeout(() => {
       copyBtn.textContent = originalText;
     }, 2000);
   } catch (err) {
+    console.error('Error copiant:', err);
     alert('No s\'ha pogut copiar el codi');
   }
 });
@@ -387,7 +404,8 @@ if (isRestart) {
   penaltyAnimation.style.display = 'none';
   introScreen.style.display = 'flex';
   introScreen.style.justifyContent = 'center';
-  introScreen.style.alignItems = 'center';
+  introScreen.style.alignItems = 'flex-start';
+  introScreen.style.paddingTop = '2rem';
   introContent.classList.add('show');
 
   document.querySelector('.intro-title').textContent = 'Torna a jugar';
