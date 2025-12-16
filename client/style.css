@@ -70,6 +70,9 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  padding: 1.5rem;
+  gap: 1.5rem;
   z-index: 1000;
   animation: fadeIn 0.5s ease-in;
   overflow-y: auto;
@@ -210,12 +213,14 @@ h2 {
 /* Animació de penal a la intro */
 .penalty-animation {
   position: relative;
-  width: 100%;
-  height: 100vh;
+  width: min(100%, 1100px);
+  height: clamp(360px, 70vh, 760px);
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .field {
@@ -753,8 +758,9 @@ button[disabled] {
 
   .intro-screen {
     overflow-y: auto;
-    align-items: flex-start;
-    padding-top: 1rem;
+    align-items: center;
+    padding: 1.25rem 1rem;
+    gap: 1rem;
   }
 
   main {
@@ -990,10 +996,15 @@ button[disabled] {
 
 
   .penalty-animation {
-    height: 60vh;
+    width: 100%;
+    max-width: 520px;
+    height: clamp(320px, 60vh, 520px);
+    padding: 0;
   }
   .field {
+    width: 100%;
     max-width: 420px;
+    margin: 0 auto;
     aspect-ratio: 16/11;
   }
   .goal-bg {
